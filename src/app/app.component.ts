@@ -196,13 +196,13 @@ export class AppComponent implements OnInit {
   }
 
   saveBookFav(): void {
-    if (this.bookObj.id && this.selectedBookFav() != "0") {
+    if (this.bookObj.id) {
       this.bookService.updateBookFav(this.bookObj.id, this.selectedBookFav())
       .subscribe((value) => {
         if(value){
           this.closeFavModal();
           this.loadBooks(this.selectedFavouriteFilter(),this.search(),this.currentPage());
-          this.showSuccessMessage('Book Favourite added successfully!');
+          this.showSuccessMessage('Book favourite updated successfully!');
         }else{
           this.showErrorMessage('Something happend. Try again later!');
         }
