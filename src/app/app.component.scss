@@ -1,0 +1,77 @@
+// Styling for table container with padding
+.table-container {
+    padding: 1rem; // Padding around the table container
+  
+    .table-header {
+      display: flex;
+      justify-content: space-between; // Space out the filter and search
+      align-items: center; // Align them vertically
+      margin-bottom: 1rem; // Margin between header and table
+  
+      .select-container {
+        width: 200px; // Fixed width for filter dropdown
+        select.form-select {
+          width: 100%; // Ensure it takes full width of container
+          padding: 0.5rem 1rem;
+        }
+      }
+  
+      .d-flex {
+        // Style for the search form on the right
+        input.form-control {
+          width: 200px; // Optional: set a fixed width for search input
+        }
+      }
+    }
+  
+    .table {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 1rem; // Padding inside the table
+  
+      th, td {
+        padding: 4px !important; /* Reduce padding */
+        text-align: center;
+      }
+
+      th {
+        width: 25%;
+      }
+  
+      thead {
+        background-color: #f1f1f1;
+      }
+  
+      tbody tr {
+        &:hover {
+          background-color: #f9f9f9;
+        }
+      }
+  
+      th {
+        font-weight: bold;
+      }
+    }
+  }
+
+// Navbar Styling
+.navbar {
+    background-color: #f8f9fa; // Light background color
+    padding: 0.2rem;
+  
+    .navbar-brand {
+      font-size: 1.2rem; // Increase font size
+      font-weight: bold; // Make it bold
+      color: #007bff; // Blue color
+      text-transform: uppercase; // Make text uppercase
+      letter-spacing: 1px; // Add spacing between letters
+      transition: color 0.3s ease-in-out; // Smooth transition effect
+  
+      &:hover {
+        color: #0056b3; // Darker blue on hover
+        text-decoration: none; // Remove underline
+      }
+    }
+  }
+  

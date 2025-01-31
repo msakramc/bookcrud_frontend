@@ -1,0 +1,263 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Books Cart</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" 
+      aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+</nav>
+
+<div class="col-12 table-container">
+  <div class="table-header d-flex justify-content-between align-items-center">
+    <!-- Left Section: Filter dropdown and Favorite button -->
+    <div class="d-flex align-items-center gap-2">
+      <div class="select-container">
+        <select class="form-select" aria-label="Filter options" id="selectfavouriteId" (change)="onFavChange($event)">
+          <option value="0" selected>All</option>
+          @for (fav of favList(); track $index) {
+          <option value="{{fav.id}}">{{fav.name}}</option>
+          }
+        </select>
+      </div>
+      <button class="btn btn-success" type="button" (click)="openFavListModal()">Create Favourite</button>
+    </div>
+
+    <!-- Right Section: Search bar and Add Book button -->
+    <form class="d-flex" role="search">
+      <input class="form-control me-2" type="search" placeholder="Search Book Title" (input)="onSearch($event)" aria-label="Search">
+      <button class="btn btn-success" type="button" (click)="openBookModal()">Add Book</button>
+    </form>
+  </div>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">Book Title</th>
+        <th scope="col">Year</th>
+        <th scope="col">Author Name</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (book of bookList(); track $index) {
+        <tr>
+          <td>{{book.bookTitle}}</td>
+          <td>{{book.bookYear}}</td>
+          <td>{{book.bookAuthor}}</td>
+          <td>
+            <button class="btn btn-primary btn-sm me-1" (click)="addFavBookModal(book)">Add to Favourite</button>
+            <button class="btn btn-warning btn-sm me-1" (click)="openBookModal(book)">Edit</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteBookModal(book)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <!-- books.component.html -->
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-end">
+    <li class="page-item" [class.disabled]="!previous">
+      <a class="page-link" href="#" (click)="goToPage(currentPage() - 1)" *ngIf="previous">Previous</a>
+    </li>
+
+    <!-- Dynamically generate the page numbers -->
+    <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index">
+      <a class="page-link" href="#" (click)="goToPage(i + 1)">{{ currentPage() }}</a>
+    </li>
+
+    <li class="page-item" [class.disabled]="!next">
+      <a class="page-link" href="#" (click)="goToPage(currentPage() + 1)" *ngIf="next">Next</a>
+    </li>
+  </ul>
+</nav>
+<div class="text-end mt-2">
+  <span>Result Per page: 10</span>
+</div>
+
+
+<!-- Modal -->
+<div class="modal" id="addBook" aria-labelledby="addBookLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addBookLabel">Add Book</h1>
+      </div>
+      <div class="modal-body">
+        <!-- Book Title in a separate row -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="validationCustom01" class="form-label">Book Title</label>
+            <input type="text" id="bookTitleId" [(ngModel)]="bookObj.bookTitle" class="form-control" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+        </div>
+
+        <!-- Author Name in a separate row -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="validationCustom02" class="form-label">Author Name</label>
+            <input type="text" [(ngModel)]="bookObj.bookAuthor" class="form-control" id="authornameId" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+        </div>
+
+        <!-- Year in a separate row -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="validationCustom03" class="form-label">Year</label>
+            <input type="text" [(ngModel)]="bookObj.bookYear" class="form-control" id="yearId" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeBookModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveBook()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal" id="addFavBook" aria-labelledby="addFavBookLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addFavBookLabel">Add to Favourite</h1>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <select [(ngModel)]="selectedBookFav" class="form-select" id="bookFav01" required>
+              <option value="0" disabled selected>Select a Favourite</option>
+              @for (fav of favList(); track $index) {
+              <option value="{{fav.id}}">{{fav.name}}</option>
+              }
+            </select>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeFavModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveBookFav()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal" id="deleteBook" aria-labelledby="deleteBookLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteBookLabel">Delete Book</h1>
+      </div>
+      <div class="modal-body">
+        Delete {{ bookObj.bookTitle }} Book?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeDeleteModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="confirmBookDelete()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="favList" aria-labelledby="favListLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="favListLabel">Favourite List</h1>
+      </div>
+      <div class="modal-body">
+        <!-- Add Fav Input and Button -->
+        <div class="mb-3">
+          <label for="favName" class="form-label">Add a Favourite</label>
+          <input type="text" class="form-control" [(ngModel)]="favObj.name" id="favName" placeholder="Enter favourite name">
+          <button class="btn btn-success mt-2" (click)="saveNewFav()">Add Favourite</button>
+        </div>
+
+        <!-- Favourite List Table -->
+        <table class="table table-bordered mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (fav of favList(); track $index) {
+              <tr>
+                <td>{{fav.name}}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm me-1" (click)="favEdit(fav)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="confirmFavDelete(fav)">Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeFavListModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="editFav" aria-labelledby="editFavLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editFavLabel">Edit Fav</h1>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="validationCustom01" class="form-label">Name</label>
+            <input type="text" id="favNameId" [(ngModel)]="favObj.name" class="form-control" required>
+            <div class="valid-feedback">
+              Looks good!
+            </div>
+          </div>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeEditfav()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveEditFav()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<!-- <div class="modal" id="deleteFav" aria-labelledby="deleteFavLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteFavLabel">Delete Favourite</h1>
+      </div>
+      <div class="modal-body">
+        Delete {{ favObj.name }} Favourite?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeFavDeleteModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="confirmFavDelete()">Save</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
